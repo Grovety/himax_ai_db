@@ -78,81 +78,137 @@ is gave in the tables below.
 
 1. Auxiliary commands
 
-|-----------------------------------------------------------------------------------------------------------------------------------------|
-|              Command                |    Answer / Example of the answer   |                     Functionality                           |
-|-----------------------------------------------------------------------------------------------------------------------------------------|
-| AT\n	                              | AT\n	                              | AT\n will be returned                                       |
-|-----------------------------------------------------------------------------------------------------------------------------------------|
-| AT^ECHO=<string>\n	                | <string>\n	                        | Echo mode, sent string will be returned                     |
-|-----------------------------------------------------------------------------------------------------------------------------------------|
-| AT^REBOOT\n	                        | OK\n                                | The nRF device will be rebooted	in two seconds              |
-|-----------------------------------------------------------------------------------------------------------------------------------------|
+<table border="1">
+  <tr>
+    <th>Command</th>
+    <th>Answer / Example of the answer</th>
+    <th>Functionality</th>
+  </tr>
+  <tr>
+    <td>AT\n</td>
+    <td>AT\n</td>
+    <td>AT\n will be returned</td>
+  </tr>
+  <tr>
+    <td>AT^ECHO=&lt;string&gt;\n</td>
+    <td>&lt;string&gt;\n</td>
+    <td>Echo mode, sent string will be returned</td>
+  </tr>
+  <tr>
+    <td>AT^REBOOT\n</td>
+    <td>OK\n</td>
+    <td>The nRF device will be rebooted in two seconds</td>
+  </tr>
+</table>
 
 
 2. Commands for getting the information about the device
 
-|-----------------------------------------------------------------------------------------------------------------------------------------|
-|              Command                |    Answer / Example of the answer   |                     Functionality                           |
-|-----------------------------------------------------------------------------------------------------------------------------------------|
-| AT^SWNVER\n                         | 01.00.00\n                          | nRF firmware version                                        |
-|-----------------------------------------------------------------------------------------------------------------------------------------|
-| AT^HWNVER\n                         | 01.00.02\n                          | nRF hardware revision                                       |
-|-----------------------------------------------------------------------------------------------------------------------------------------|
-| AT^SWHVER\n                         | 01.00.03\n                          | Himax firmware version                                      |
-|-----------------------------------------------------------------------------------------------------------------------------------------|
-| AT^HWHVER\n                         | 01.00.04\n                          | Himax hardware revision                                     |
-|-----------------------------------------------------------------------------------------------------------------------------------------|
-| AT^DTVER\n                          | Feb  3 2025,09:39:30;\n             | The last build timestamp of the nRF firmware                |
-|-----------------------------------------------------------------------------------------------------------------------------------------|
+<table border="1">
+  <tr>
+    <th>Command</th>
+    <th>Answer / Example of the answer</th>
+    <th>Functionality</th>
+  </tr>
+  <tr>
+    <td>AT^SWNVER\n</td>
+    <td>01.00.00\n</td>
+    <td>nRF firmware version</td>
+  </tr>
+  <tr>
+    <td>AT^HWNVER\n</td>
+    <td>01.00.02\n</td>
+    <td>nRF hardware revision</td>
+  </tr>
+  <tr>
+    <td>AT^SWHVER\n</td>
+    <td>01.00.03\n</td>
+    <td>Himax firmware version</td>
+  </tr>
+  <tr>
+    <td>AT^HWHVER\n</td>
+    <td>01.00.04\n</td>
+    <td>Himax hardware revision</td>
+  </tr>
+  <tr>
+    <td>AT^DTVER\n</td>
+    <td>Feb 3 2025,09:39:30;\n</td>
+    <td>The last build timestamp of the nRF firmware</td>
+  </tr>
+</table>
 
 3. Commands for reading images from camera
 
-|-----------------------------------------------------------------------------------------------------------------------------------------|
-|   Command       |    Answer / Example of the answer                       |                     Functionality                           |
-|-----------------------------------------------------------------------------------------------------------------------------------------|
-| AT&IMAGE\n      | OK\n                                                    | Take the camera picture                                     |
-|-----------------------------------------------------------------------------------------------------------------------------------------|
-| AT&RDIMG\n      | #240<B0><B1><B2>..<B239>                                | byte 0 : '!' - last fragment,'#' - no last fragment         |
-|---------------------------------------------------------------------------| bytes 1..3 : the number of binary data (001..240)           |
-| AT&RINEXT\n     | #240<B0><B1><B2>..<B239> (no last chunk)                | bytes 4.. : binary data, a chunk of jpeg image              |
-|                 | !016<B0><B1><B2>..<B16> (last chunk)                    |                                                             |
-|-----------------------------------------------------------------------------------------------------------------------------------------|
+<table border="1">
+  <tr>
+    <th>Command</th>
+    <th>Answer / Example of the answer</th>
+    <th>Functionality</th>
+  </tr>
+  <tr>
+    <td>AT&IMAGE\n</td>
+    <td>OK\n</td>
+    <td>Take the camera picture</td>
+  </tr>
+  <tr>
+    <td>AT&RDIMG\n</td>
+    <td>#240&lt;B0&gt;&lt;B1&gt;&lt;B2&gt;..&lt;B239&gt;</td>
+    <td rowspan="2">byte 0 : '!' - last fragment, '#' - no last fragment
+      <br>bytes 1..3 : the number of binary data (001..240)
+      <br>bytes 4.. : binary data, a chunk of jpeg image</td>
+  </tr>
+  <tr>
+    <td>AT&RINEXT\n</td>
+    <td>#240&lt;B0&gt;&lt;B1&gt;&lt;B2&gt;..&lt;B239&gt; (no last chunk)<br>!016&lt;B0&gt;&lt;B1&gt;&lt;B2&gt;..&lt;B16&gt; (last chunk)</td>
+  </tr>
+</table>
 
 The reading image procedure:
-  -- Send command AT&IMAGE
-  -- Read jpeg fragments, merge them to the buffer, if we have read last fragment - stop
+  - Send command AT&IMAGE
+  - Read jpeg fragments, merge them to the buffer, if we have read last fragment - stop
 
 4. Commands for reading the list of recognized objects
 
-|-----------------------------------------------------------------------------------------------------------------------------------------|
-|   Command             |    Answer / Example of the answer                    |                     Functionality                        |
-|-----------------------------------------------------------------------------------------------------------------------------------------|
-| AT+LRREAD=<count>\n   | hedgehog,2025-04-05 00:00:30,N;cat,2025-04-06        | The sequence of <count> records (count can be 1..7)      |
-|                       | 12:11:33,Y;tiger 2025-04-06 12:55:11,N\n             | <REC1>;<REC2>;..<RECcount> each of them have format      |
-|                       |                                                      | <objname>,<timestamp>,<flag>                             |
-|                       |                                                      | <objname> - the name of the object                       |
-|                       |                                                      | <timestamp> - date and time of the recognition point     |
-|                       |                                                      | (format YYYY-MM-DD HH:MM:SS)                             |
-|-----------------------|                                                      | flag - object was expected or not, Y or N                |
-| AT+LRRDNEXT=<count>\n |                                                      |                                                          |
-|-----------------------|------------------------------------------------------|----------------------------------------------------------|
+<table border="1">
+  <tr>
+    <th>Command</th>
+    <th>Answer / Example of the answer</th>
+    <th>Functionality</th>
+  </tr>
+  <tr>
+    <td>AT+LRREAD=&lt;count&gt;\n</td>
+    <td rowspan="2">hedgehog,2025-04-05 00:00:30,N;cat,2025-04-06 <br> 12:11:33,Y;tiger 2025-04-06 12:55:11,N\n</td>
+    <td rowspan="2">The sequence of &lt;count&gt; records (count can be 1..7)<br>&lt;REC1&gt;;&lt;REC2&gt;;..&lt;RECcount&gt; each of them have format<br>&lt;objname&gt;,&lt;timestamp&gt;,&lt;flag&gt;<br>&lt;objname&gt; - the name of the object<br>&lt;timestamp&gt; - date and time of the recognition point<br>(format YYYY-MM-DD HH:MM:SS)<br>flag - object was expected or not, Y or N</td>
+  </tr>
+  <tr>
+    <td>AT+LRRDNEXT=&lt;count&gt;\n</td>
+  </tr>
+</table>
 
 The reading history procedure:
-  -- send command AT+LRREAD, read the first chunk of the list
-  -- send commands AT+LRRDNEXT repeatedly, each will read the next chunk of the list, until empty string will be returned
+  - send command AT+LRREAD, read the first chunk of the list
+  - send commands AT+LRRDNEXT repeatedly, each will read the next chunk of the list, until empty string will be returned
 
 5. Commands witch are related to TOF sensor
 
-------------------------------------------------------------------------------------------------------------------------------------------|
-|   Command             |    Answer / Example of the answer   |                               Functionality                               |
-|-----------------------------------------------------------------------------------------------------------------------------------------|
-| AT&SMODE=<mode>\n     | OK\n                                | Set work mode fot TOF sesor, mode can be TIMER,OFF,AUTO+                  |
-|-----------------------------------------------------------------------------------------------------------------------------------------|
-| AT&RDDIST\n           | 10,64351\n (bad result)             | The string <status><distance> will be returned.                           |
-|                       | 0,222\n (good result)               | Status - the error code of measurement (UM2133, “Table 1. Range status’.) |
-|                       |                                     | Distance - the distance to object, mm                                     |
-|-----------------------------------------------------------------------------------------------------------------------------------------|
+<table border="1">
+  <tr>
+    <th>Command</th>
+    <th>Answer / Example of the answer</th>
+    <th>Functionality</th>
+  </tr>
+  <tr>
+    <td>AT&SMODE=&lt;mode&gt;\n</td>
+    <td>OK\n</td>
+    <td>Set work mode for TOF sensor, mode can be TIMER, OFF, AUTO+</td>
+  </tr>
+  <tr>
+    <td>AT&RDDIST\n</td>
+    <td>10,64351\n (bad result)<br>0,222\n (good result)</td>
+    <td>The string &lt;status&gt;&lt;distance&gt; will be returned.<br>Status - the error code of measurement (UM2133, “Table 1. Range status”.)<br>Distance - the distance to object, mm</td>
+  </tr>
+</table>
 
 The distance measurement procedure:
-  -- send command AT&SMODE=TIMER for turning on the sensor
-  -- send one or more commands AT&RDDIST to get the measurement results
+  - send command AT&SMODE=TIMER for turning on the sensor
+  - send one or more commands AT&RDDIST to get the measurement results
